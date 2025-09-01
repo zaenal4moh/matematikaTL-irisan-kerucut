@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conics Playground — Irisan Kerucut</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: #333;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding-bottom: 20px;
+    }
+    
+    header {
+      background: linear-gradient(90deg, #6366f1, #a855f7);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 32px;
+      margin-bottom: 15px;
+    }
+    
+    nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    nav button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: bold;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      transition: 0.3s;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    nav button:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      margin-bottom: 20px;
+      display: none;
+    }
+    
+    .active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    h2 {
+      color: #6366f1;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    
+    h3 {
+      color: #7c3aed;
+      margin: 15px 0;
+    }
+    
+    .conic-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+    
+    .conic-card {
+      background: #f8fafc;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s;
+    }
+    
+    .conic-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .conic-card h4 {
+      color: #6366f1;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+    
+    .conic-card p {
+      margin-bottom: 10px;
+    }
+    
+    .conic-card .formula {
+      font-family: 'Courier New', monospace;
+      background: #edf2f7;
+      padding: 8px;
+      border-radius: 6px;
+      font-weight: bold;
+      color: #4c51bf;
+    }
+    
+    canvas {
+      display: block;
+      margin: 20px auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    
+    .control-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    label {
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #4b5563;
+    }
+    
+    select, input {
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .quiz-question {
+      background: #f8fafc;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .option {
+      padding: 12px 15px;
+      margin: 8px 0;
+      background: #f1f5f9;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    
+    .option:hover {
+      background: #e0e7ff;
+    }
+    
+    .game-level {
+      display: none;
+    }
+    
+    .game-level.active {
+      display: block;
+    }
+    
+    .score-display {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #6366f1;
+      margin: 20px 0;
+    }
+    
+    .feedback {
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      text-align: center;
+      font-weight: 500;
+    }
+    
+    .correct {
+      background: #dcfce7;
+      color: #166534;
+    }
+    
+    .incorrect {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    
+    .nav-btn {
+      padding: 10px 20px;
+      background: #6366f1;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    
+    .nav-btn:hover {
+      background: #4f46e5;
+    }
+    
+    .nav-btn:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @media (max-width: 768px) {
+      .controls {
+        grid-template-columns: 1fr;
+      }
+      
+      nav button {
+        padding: 10px 15px;
+        font-size: 14px;
+      }
+      
+      section {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Conics Playground — Irisan Kerucut</h1>
+    <nav>
+      <button onclick="showSection('materi')">Materi</button>
+      <button onclick="showSection('grafik')">Lab Grafik</button>
+      <button onclick="showSection('kuis')">Kuis</button>
+      <button onclick="showSection('game')">Game</button>
+    </nav>
+  </header>
+
+  <section id="materi" class="active">
+    <h2>Materi Irisan Kerucut</h2>
+    
+    <div class="conic-info">
+      <div class="conic-card">
+        <h4>Lingkaran</h4>
+        <p>Himpunan semua titik yang berjarak sama dari satu titik tetap (pusat).</p>
+        <div class="formula">(x - h)² + (y - k)² = r²</div>
+        <p>di mana (h, k) adalah pusat dan r adalah jari-jari.</p>
+      </div>
+      
+      <div class="conic-card">
+        <h4>Parabola</h4>
+        <p>Himpunan semua titik yang berjarak sama dari titik fokus dan garis direktriks.</p>
+        <div class="formula">y - k = a(x - h)²</div>
+        <div class="formula">x - h = a(y - k)²</div>
+        <p>di mana (h, k) adalah puncak parabola.</p>
+      </div>
+      
+      <div class="conic-card">
+        <h4>Elips</h4>
+        <p>Himpunan semua titik yang jumlah jaraknya ke dua titik fokus adalah konstan.</p>
+        <div class="formula">(x - h)²/a² + (y - k)²/b² = 1</div>
+        <p>di mana (h, k) adalah pusat elips.</p>
+      </div>
+      
+      <div class="conic-card">
+        <h4>Hiperbola</h4>
+        <p>Himpunan semua titik yang selisih jaraknya ke dua titik fokus adalah konstan.</p>
+        <div class="formula">(x - h)²/a² - (y - k)²/b² = 1</div>
+        <p>di mana (h, k) adalah pusat hiperbola.</p>
+      </div>
+    </div>
+    
+    <canvas id="materiCanvas" width="500" height="350"></canvas>
+  </section>
+
+  <section id="grafik">
+    <h2>Lab Grafik Interaktif</h2>
+    
+    <div class="controls">
+      <div class="control-group">
+        <label for="conicType">Pilih Jenis Irisan Kerucut:</label>
+        <select id="conicType" onchange="drawConic()">
+          <option value="circle">Lingkaran</option>
+          <option value="parabola">Parabola</option>
+          <option value="ellipse">Elips</option>
+          <option value="hyperbola">Hiperbola</option>
+        </select>
+      </div>
+      
+      <div class="control-group">
+        <label for="paramA">Parameter a:</label>
+        <input type="range" id="paramA" min="1" max="100" value="50" oninput="drawConic()">
+        <span id="paramAValue">50</span>
+      </div>
+      
+      <div class="control-group">
+        <label for="paramB">Parameter b:</label>
+        <input type="range" id="paramB" min="1" max="100" value="30" oninput="drawConic()">
+        <span id="paramBValue">30</span>
+      </div>
+    </div>
+    
+    <canvas id="conicCanvas" width="500" height="350"></canvas>
+  </section>
+
+  <section id="kuis">
+    <h2>Kuis Irisan Kerucut</h2>
+    <p>Uji pemahaman Anda tentang irisan kerucut dengan kuis berikut. Pilih jawaban yang benar!</p>
+    
+    <div id="quiz-container"></div>
+    
+    <div class="score-display">
+      Skor: <span id="score">0</span> / <span id="total-questions">0</span>
+    </div>
+    
+    <div id="feedback" class="feedback" style="display: none;"></div>
+  </section>
+
+  <section id="game">
+    <h2>Game Identifikasi Irisan Kerucut</h2>
+    <p>Mainkan game ini untuk mengasah kemampuan mengidentifikasi persamaan irisan kerucut!</p>
+    
+    <div id="game-levels">
+      <div class="game-level active" id="level1">
+        <h3>Level 1: Identifikasi Persamaan</h3>
+        <div class="quiz-question">
+          <p>(x - 2)² + (y + 3)² = 25 → ini bentuk apa?</p>
+          <div class="option" onclick="checkAnswer(this, 'Lingkaran', 'level1')">Lingkaran</div>
+          <div class="option" onclick="checkAnswer(this, 'Parabola', 'level1')">Parabola</div>
+          <div class="option" onclick="checkAnswer(this, 'Elips', 'level1')">Elips</div>
+        </div>
+      </div>
+      
+      <div class="game-level" id="level2">
+        <h3>Level 2: Identifikasi Persamaan</h3>
+        <div class="quiz-question">
+          <p>y - 2 = 3(x - 1)² → ini bentuk apa?</p>
+          <div class="option" onclick="checkAnswer(this, 'Lingkaran', 'level2')">Lingkaran</div>
+          <div class="option" onclick="checkAnswer(this, 'Parabola', 'level2')">Parabola</div>
+          <div class="option" onclick="checkAnswer(this, 'Hiperbola', 'level2')">Hiperbola</div>
+        </div>
+      </div>
+      
+      <div class="game-level" id="level3">
+        <h3>Level 3: Identifikasi Persamaan</h3>
+        <div class="quiz-question">
+          <p>(x - 1)²/9 + (y + 2)²/4 = 1 → ini bentuk apa?</p>
+          <div class="option" onclick="checkAnswer(this, 'Elips', 'level3')">Elips</div>
+          <div class="option" onclick="checkAnswer(this, 'Lingkaran', 'level3')">Lingkaran</div>
+          <div class="option" onclick="checkAnswer(this, 'Hiperbola', 'level3')">Hiperbola</div>
+        </div>
+      </div>
+      
+      <div class="game-level" id="level4">
+        <h3>Level 4: Identifikasi Persamaan</h3>
+        <div class="quiz-question">
+          <p>(x + 2)²/4 - (y - 1)²/9 = 1 → ini bentuk apa?</p>
+          <div class="option" onclick="checkAnswer(this, 'Elips', 'level4')">Elips</div>
+          <div class="option" onclick="checkAnswer(this, 'Parabola', 'level4')">Parabola</div>
+          <div class="option" onclick="checkAnswer(this, 'Hiperbola', 'level4')">Hiperbola</div>
+        </div>
+      </div>
+      
+      <div class="game-level" id="level5">
+        <h3>Level 5: Tantangan Akhir</h3>
+        <div class="quiz-question">
+          <p>x² + y² - 4x + 6y - 3 = 0 → ini bentuk apa?</p>
+          <div class="option" onclick="checkAnswer(this, 'Lingkaran', 'level5')">Lingkaran</div>
+          <div class="option" onclick="checkAnswer(this, 'Elips', 'level5')">Elips</div>
+          <div class="option" onclick="checkAnswer(this, 'Parabola', 'level5')">Parabola</div>
+        </div>
+      </div>
+      
+      <div class="game-level" id="level-complete">
+        <h3>Selamat!</h3>
+        <p>Anda telah menyelesaikan semua level. Skor akhir Anda: <span id="final-score">0</span></p>
+        <button class="nav-btn" onclick="resetGame()">Main Lagi</button>
+      </div>
+    </div>
+    
+    <div class="navigation">
+      <button class="nav-btn" id="prev-level" onclick="navigateLevel('prev')" disabled>Sebelumnya</button>
+      <button class="nav-btn" id="next-level" onclick="navigateLevel('next')">Selanjutnya</button>
+    </div>
+  </section>
+
+  <script>
+    // Variabel global
+    let currentLevel = 1;
+    let gameScore = 0;
+    const totalLevels = 5;
+    
+    // Tampilkan section yang dipilih
+    function showSection(id) {
+      document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      
+      // Jika menampilkan materi, gambar grafik
+      if (id === 'materi') {
+        drawMateriConics();
+      }
+      
+      // Jika menampilkan lab grafik, gambar grafik awal
+      if (id === 'grafik') {
+        drawConic();
+      }
+    }
+    
+    // Gambar contoh irisan kerucut di bagian materi
+    function drawMateriConics() {
+      const canvas = document.getElementById('materiCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Bersihkan canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Gambar grid
+      drawGrid(ctx, width, height);
+      
+      // Gambar contoh lingkaran
+      ctx.beginPath();
+      ctx.arc(width/2, height/2, 80, 0, Math.PI * 2);
+      ctx.strokeStyle = '#6366f1';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      
+      // Tambahkan label
+      ctx.font = '16px Poppins';
+      ctx.fillStyle = '#6366f1';
+      ctx.fillText('Lingkaran: (x - h)² + (y - k)² = r²', width/2 - 140, 40);
+    }
+    
+    // Gambar grid pada canvas
+    function drawGrid(ctx, width, height) {
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1;
+      
+      // Garis vertikal
+      for (let x = 0; x <= width; x += 50) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      
+      // Garis horizontal
+      for (let y = 0; y <= height; y += 50) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+      
+      // Sumbu X dan Y
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 2;
+      
+      // Sumbu X
+      ctx.beginPath();
+      ctx.moveTo(0, height/2);
+      ctx.lineTo(width, height/2);
+      ctx.stroke();
+      
+      // Sumbu Y
+      ctx.beginPath();
+      ctx.moveTo(width/2, 0);
+      ctx.lineTo(width/2, height);
+      ctx.stroke();
+    }
+    
+    // Gambar grafik berdasarkan pilihan pengguna
+    function drawConic() {
+      const canvas = document.getElementById('conicCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      const type = document.getElementById('conicType').value;
+      const a = parseInt(document.getElementById('paramA').value);
+      const b = parseInt(document.getElementById('paramB').value);
+      
+      // Update nilai parameter yang ditampilkan
+      document.getElementById('paramAValue').textContent = a;
+      document.getElementById('paramBValue').textContent = b;
+      
+      // Bersihkan canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Gambar grid
+      drawGrid(ctx, width, height);
+      
+      // Atur style untuk grafik
+      ctx.strokeStyle = '#a855f7';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const scale = 4; // Skala untuk menampilkan grafik
+      
+      if (type === 'circle') {
+        // Gambar lingkaran
+        const radius = a;
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      } else if (type === 'parabola') {
+        // Gambar parabola y = a(x - h)² + k
+        ctx.moveTo(centerX - 200, centerY);
+        for (let x = -200; x <= 200; x += 2) {
+          let y = (a / 500) * x * x;
+          ctx.lineTo(centerX + x, centerY - y);
+        }
+      } else if (type === 'ellipse') {
+        // Gambar elips
+        for (let t = 0; t <= 2 * Math.PI; t += 0.01) {
+          let x = a * Math.cos(t);
+          let y = b * Math.sin(t);
+          ctx.lineTo(centerX + x, centerY + y);
+        }
+      } else if (type === 'hyperbola') {
+        // Gambar hiperbola
+        // Cabang kanan
+        for (let x = 20; x <= 200; x += 2) {
+          let y = Math.sqrt((x * x * b * b) / (a * a) - b * b);
+          ctx.lineTo(centerX + x, centerY + y);
+        }
+        // Cabang kiri
+        for (let x = 20; x <= 200; x += 2) {
+          let y = Math.sqrt((x * x * b * b) / (a * a) - b * b);
+          ctx.lineTo(centerX - x, centerY + y);
+        }
+        // Cabang kanan bawah
+        for (let x = 20; x <= 200; x += 2) {
+          let y = Math.sqrt((x * x * b * b) / (a * a) - b * b);
+          ctx.lineTo(centerX + x, centerY - y);
+        }
+        // Cabang kiri bawah
+        for (let x = 20; x <= 200; x += 2) {
+          let y = Math.sqrt((x * x * b * b) / (a * a) - b * b);
+          ctx.lineTo(centerX - x, centerY - y);
+        }
+      }
+      
+      ctx.stroke();
+      
+      // Tambahkan judul grafik
+      ctx.font = '16px Poppins';
+      ctx.fillStyle = '#6366f1';
+      let title = '';
+      switch(type) {
+        case 'circle': title = 'Lingkaran'; break;
+        case 'parabola': title = 'Parabola'; break;
+        case 'ellipse': title = 'Elips'; break;
+        case 'hyperbola': title = 'Hiperbola'; break;
+      }
+      ctx.fillText(`${title} (a=${a}, b=${b})`, 20, 30);
+    }
+    
+    // Inisialisasi kuis
+    const quizData = [
+      {
+        q: '(x - 1)² + (y + 2)² = 16',
+        options: ['Lingkaran', 'Parabola', 'Elips'],
+        answer: 'Lingkaran'
+      },
+      {
+        q: 'y - 2 = 3(x - 3)²',
+        options: ['Lingkaran', 'Parabola', 'Elips'],
+        answer: 'Parabola'
+      },
+      {
+        q: '(x - 1)²/9 + (y + 2)²/4 = 1',
+        options: ['Lingkaran', 'Parabola', 'Elips'],
+        answer: 'Elips'
+      },
+      {
+        q: '(x + 2)²/4 - (y - 1)²/9 = 1',
+        options: ['Lingkaran', 'Parabola', 'Hiperbola'],
+        answer: 'Hiperbola'
+      },
+      {
+        q: 'x² + y² - 4x + 6y - 3 = 0',
+        options: ['Lingkaran', 'Elips', 'Parabola'],
+        answer: 'Lingkaran'
+      }
+    ];
+    
+    const quizContainer = document.getElementById('quiz-container');
+    let userScore = 0;
+    
+    // Tampilkan kuis
+    quizData.forEach((item, i) => {
+      const div = document.createElement('div');
+      div.className = 'quiz-question';
+      div.innerHTML = `<p><strong>Pertanyaan ${i + 1}:</strong> ${item.q}</p>`;
+      
+      item.options.forEach(opt => {
+        const option = document.createElement('div');
+        option.className = 'option';
+        option.textContent = opt;
+        option.onclick = function() {
+          checkQuizAnswer(this, item.answer, item.q);
+        };
+        div.appendChild(option);
+      });
+      
+      quizContainer.appendChild(div);
+    });
+    
+    // Update total pertanyaan
+    document.getElementById('total-questions').textContent = quizData.length;
+    
+    // Periksa jawaban kuis
+    function checkQuizAnswer(element, correctAnswer, question) {
+      const options = element.parentElement.querySelectorAll('.option');
+      const feedback = document.getElementById('feedback');
+      
+      // Nonaktifkan semua opsi setelah memilih
+      options.forEach(opt => {
+        opt.style.pointerEvents = 'none';
+        if (opt.textContent === correctAnswer) {
+          opt.style.background = '#dcfce7';
+        } else if (opt === element && opt.textContent !== correctAnswer) {
+          opt.style.background = '#fee2e2';
+        }
+      });
+      
+      // Tampilkan feedback
+      if (element.textContent === correctAnswer) {
+        feedback.textContent = 'Benar!';
+        feedback.className = 'feedback correct';
+        userScore++;
+        document.getElementById('score').textContent = userScore;
+      } else {
+        feedback.textContent = `Salah! Jawaban yang benar: ${correctAnswer}`;
+        feedback.className = 'feedback incorrect';
+      }
+      
+      feedback.style.display = 'block';
+    }
+    
+    // Fungsi untuk game
+    function checkAnswer(element, correctAnswer, level) {
+      const feedback = document.getElementById('feedback');
+      
+      if (element.textContent === correctAnswer) {
+        feedback.textContent = 'Benar! Lanjut ke level berikutnya.';
+        feedback.className = 'feedback correct';
+        gameScore++;
+        
+        // Tunggu sebentar sebelum pindah level
+        setTimeout(() => {
+          navigateLevel('next');
+        }, 1500);
+      } else {
+        feedback.textContent = 'Salah, coba lagi!';
+        feedback.className = 'feedback incorrect';
+      }
+      
+      feedback.style.display = 'block';
+      
+      // Sembunyikan feedback setelah 2 detik
+      setTimeout(() => {
+        feedback.style.display = 'none';
+      }, 2000);
+    }
+    
+    // Navigasi antara level game
+    function navigateLevel(direction) {
+      const currentLevelElem = document.getElementById(`level${currentLevel}`);
+      currentLevelElem.classList.remove('active');
+      
+      if (direction === 'next' && currentLevel < totalLevels) {
+        currentLevel++;
+      } else if (direction === 'prev' && currentLevel > 1) {
+        currentLevel--;
+      }
+      
+      // Jika sudah mencapai level terakhir
+      if (currentLevel > totalLevels) {
+        document.getElementById('level-complete').classList.add('active');
+        document.getElementById('final-score').textContent = gameScore;
+        document.getElementById('prev-level').style.display = 'none';
+        document.getElementById('next-level').style.display = 'none';
+        return;
+      }
+      
+      const nextLevelElem = document.getElementById(`level${currentLevel}`);
+      nextLevelElem.classList.add('active');
+      
+      // Perbarui status tombol navigasi
+      document.getElementById('prev-level').disabled = (currentLevel === 1);
+      document.getElementById('next-level').disabled = (currentLevel === totalLevels);
+      
+      // Sembunyikan feedback
+      document.getElementById('feedback').style.display = 'none';
+    }
+    
+    // Reset game
+    function resetGame() {
+      currentLevel = 1;
+      gameScore = 0;
+      
+      // Sembunyikan semua level
+      document.querySelectorAll('.game-level').forEach(level => {
+        level.classList.remove('active');
+      });
+      
+      // Tampilkan level 1
+      document.getElementById('level1').classList.add('active');
+      
+      // Tampilkan tombol navigasi
+      document.getElementById('prev-level').style.display = 'block';
+      document.getElementById('next-level').style.display = 'block';
+      
+      // Reset status tombol navigasi
+      document.getElementById('prev-level').disabled = true;
+      document.getElementById('next-level').disabled = false;
+    }
+    
+    // Gambar grafik saat halaman dimuat
+    window.onload = function() {
+      drawMateriConics();
+      drawConic();
+    };
+  </script>
+</body>
+</html>
